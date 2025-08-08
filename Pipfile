@@ -7,9 +7,12 @@ name = "pypi"
 pandas = "*"
 seaborn = "*"
 numpy = "*"
+pefile = "*"
+imbalanced-learn = "*"
 
 [dev-packages]
 ipykernel = "*"
+notebook = "*"
 
 [requires]
-python_version = "3.12"
+python_version = "3.13"
