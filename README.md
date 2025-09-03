@@ -44,3 +44,12 @@ A escolha do Random Forest para este projeto de detecção de ransomware está a
 Sua arquitetura baseada na combinação de múltiplas árvores de decisão garante maior generalização e reduz significativamente o risco de falsos positivos e falsos negativos. Além disso, o modelo fornece métricas de importância das variáveis, permitindo compreender quais características do sistema têm maior influência na detecção de atividades maliciosas.
 
 Ao adotar o Random Forest, este projeto busca oferecer uma solução que alia eficiência técnica e confiabilidade prática, fortalecendo a defesa contra ataques de ransomware e contribuindo para a segurança de ambientes digitais críticos.
+
+# Resultados
+
+- Matriz de confusão:
+
+<img width="750" height="430" alt="image" src="https://github.com/user-attachments/assets/f386607f-8df8-469e-b03c-e58bbb8eba46" />
+
+
+
