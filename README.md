@@ -37,3 +37,10 @@ Treinamento: o modelo gera diversas árvores de decisão a partir de subconjunto
 
 O Random Forest é amplamente utilizado em áreas como análise de risco, detecção de anomalias, reconhecimento de padrões e segurança cibernética. Neste projeto, o modelo é aplicado à detecção de ransomware, permitindo identificar comportamentos suspeitos de forma proativa e aumentando a resiliência dos sistemas frente a ameaças digitais.
 
+## Por que utilizar o Random Forest neste projeto
+
+A escolha do Random Forest para este projeto de detecção de ransomware está alinhada à necessidade de um modelo preciso, robusto e escalável diante de um cenário de ameaças em constante evolução. Diferentemente de técnicas tradicionais de segurança, que dependem de assinaturas fixas ou regras estáticas, o Random Forest é capaz de aprender padrões complexos de comportamento e identificar anomalias mesmo em situações não previamente catalogadas.
+
+Sua arquitetura baseada na combinação de múltiplas árvores de decisão garante maior generalização e reduz significativamente o risco de falsos positivos e falsos negativos. Além disso, o modelo fornece métricas de importância das variáveis, permitindo compreender quais características do sistema têm maior influência na detecção de atividades maliciosas.
+
+Ao adotar o Random Forest, este projeto busca oferecer uma solução que alia eficiência técnica e confiabilidade prática, fortalecendo a defesa contra ataques de ransomware e contribuindo para a segurança de ambientes digitais críticos.
