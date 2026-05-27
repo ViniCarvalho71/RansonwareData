@@ -24,13 +24,18 @@ for cell in nb['cells']:
         elif 'categorical_features = X.columns.tolist()' in source:
             cell['source'] = [
                 "import joblib\n",
-                "from sklearn.preprocessing import StandardScaler\n",
+                "from sklearn.impute import SimpleImputer\n",
                 "\n",
-                "scaler = StandardScaler()\n",
-                "X_encoded = pd.DataFrame(scaler.fit_transform(X), columns=X.columns)\n",
+                "imputer = SimpleImputer(strategy='constant', fill_value=0)\n",
                 "\n",
-                "joblib.dump(scaler, 'preprocessor.joblib')\n",
-                "print('Scaler salvo em preprocessor.joblib')\n"
+                "X_encoded = pd.DataFrame(\n",
+                "    imputer.fit_transform(X),\n",
+                "    columns=X.columns\n",
+                ")\n",
+                "\n",
+                "joblib.dump(imputer, 'preprocessor.joblib')\n",
+                "\n",
+                "print('Preprocessor salvo em preprocessor.joblib')\n"
             ]
 
 with open('c:/Projetos/RansonwareData/Train/train_v2.ipynb', 'w', encoding='utf-8') as f:
