@@ -1,0 +1,1 @@
+{"features": ["total_events", "events_per_second", "num_created_processes", "num_created_files", "num_registry_modifications", "num_network_connections", "num_dns_queries", "num_unique_ips", "num_unique_ports", "suspicious_extensions"]}
