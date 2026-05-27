@@ -4,86 +4,84 @@ from Evtx.Evtx import Evtx
 import pandas as pd
 import logging
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO)
 
 def parse_evtx_file(path: Path) -> list:
-    """
-    Parse a single EVTX file to extract structured fields.
-    """
     rows = []
+
     try:
         with Evtx(str(path)) as log:
             for record in log.records():
                 try:
-                    xml_str = record.xml()
-                    root = ET.fromstring(xml_str)
-                    row = {"_log_file": path.name}
+                    root = ET.fromstring(record.xml())
+
+                    row = {
+                        "_log_file": path.name
+                    }
 
                     system = root.find("{*}System")
+
                     if system is not None:
                         for child in system:
-                            tag = child.tag.split("}")[-1]
-                            if tag == "TimeCreated":
-                                row["SystemTime"] = child.attrib.get("SystemTime")
-                            elif tag == "Provider":
-                                if "Name" in child.attrib:
-                                    row["Name"] = child.attrib.get("Name")
-                            elif tag == "Execution":
-                                if "ProcessID" in child.attrib:
-                                    row["ProcessID"] = child.attrib.get("ProcessID")
-                                if "ThreadID" in child.attrib:
-                                    row["ThreadID"] = child.attrib.get("ThreadID")
-                            elif tag == "Security":
-                                if "UserID" in child.attrib:
-                                    row["UserID"] = child.attrib.get("UserID")
-                            elif tag == "EventID":
+                            tag = child.tag.split("}")[-1].lower()
+
+                            if tag == "timecreated":
+                                row["utc_time"] = child.attrib.get("SystemTime")
+
+                            elif tag == "eventid":
+                                row["event_id"] = child.text
+
+                            elif tag == "execution":
+                                row["process_id"] = child.attrib.get("ProcessID")
+
+                            elif tag == "providername":
+                                row["provider"] = child.attrib.get("Name")
+
+                            elif child.text:
                                 row[tag] = child.text
-                            else:
-                                if child.text is not None:
-                                    row[tag] = child.text
 
                     event_data = root.find("{*}EventData")
+
                     if event_data is not None:
                         for d in event_data.findall("{*}Data"):
                             name = d.attrib.get("Name")
                             if name:
-                                row[name] = d.text
-
-                    user_data = root.find("{*}UserData")
-                    if user_data is not None:
-                        for elem in user_data.iter():
-                            if elem is user_data:
-                                continue
-                            tag = elem.tag.split("}")[-1]
-                            if elem.text is not None and tag not in row:
-                                row[tag] = elem.text
+                                row[name.lower()] = d.text
 
                     rows.append(row)
+
                 except Exception as e:
-                    continue
+                    logging.debug(f"Skipped record: {e}")
+
     except Exception as e:
-        logging.error(f"Error reading EVTX file {path}: {e}")
-        
+        logging.error(f"Error reading {path}: {e}")
+
     return rows
+
 
 def parse_all_evtx(logs_dir: Path) -> pd.DataFrame:
     all_records = []
     logs_dir = Path(logs_dir)
-    evtx_files = list(logs_dir.glob("*.evtx"))
-    
-    logging.info(f"Found {len(evtx_files)} EVTX files in {logs_dir}")
-    
-    for p in sorted(evtx_files):
-        logging.info(f"Parsing {p.name}...")
-        records = parse_evtx_file(p)
-        all_records.extend(records)
-        
+
+    files = list(logs_dir.glob("*.evtx"))
+    logging.info(f"{len(files)} EVTX files found")
+
+    for f in files:
+        logging.info(f"Parsing {f.name}")
+        all_records.extend(parse_evtx_file(f))
+
     df = pd.DataFrame(all_records)
-    
-    if "ProcessID" in df.columns and "ProcessId" not in df.columns:
-        df["ProcessId"] = df["ProcessID"]
-    if "SystemTime" in df.columns and "UtcTime" not in df.columns:
-        df["UtcTime"] = df["SystemTime"]
-        
-    logging.info(f"Parsed {len(df)} total events.")
+
+    # PADRONIZAÇÃO FINAL
+    df.columns = [c.lower() for c in df.columns]
+
+    if "processid" in df.columns and "process_id" not in df.columns:
+        df["process_id"] = df["processid"]
+
+    if "systemtime" in df.columns and "utc_time" not in df.columns:
+        df["utc_time"] = df["systemtime"]
+
+    if "eventid" in df.columns:
+        df["event_id"] = pd.to_numeric(df["eventid"], errors="coerce")
+
     return df
