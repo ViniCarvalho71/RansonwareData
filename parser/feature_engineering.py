@@ -214,13 +214,8 @@ def extract_behavioral_features(df: pd.DataFrame) -> pd.DataFrame:
         if 'Label' in group.columns:
             label = group['Label'].max()
 
-        log_file = ''
-
-        if '_log_file' in group.columns:
-            log_file = str(group['_log_file'].iloc[0])
 
         features.append({
-             '_log_file': log_file,
 
             'ProcessKey': process_key,
 
